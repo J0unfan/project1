@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihrm.system.dao.RolePriDao">
+    <!--根据角色id查询该角色有的权限-->
+    <select id="queryMenuIdList" resultType="int">
+        select pri_id from sys_rel_role_pri where role_id = #{value}
+    </select>
+
+    <delete id="deleteBatch">
+        delete from sys_rel_role_pri where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <select id="findAllPriByRoleId" resultType="int">
+        select pri_id from sys_rel_role_pri
+        where role_id = #{roleId}
+    </select>
+</mapper>

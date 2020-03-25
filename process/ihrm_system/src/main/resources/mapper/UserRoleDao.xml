@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihrm.system.dao.UserRoleDao">
+    <delete id="deleteBatch">
+        delete from sys_rel_user_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+    <select id="findAllPermsByUserId" resultType="String" parameterType="String">
+        select pri.perm from sys_privilege pri
+        join  sys_rel_role_pri p on pri.id =p.pri_id
+		join sys_rel_user_role r on r.role_id = p.role_id
+        join sys_user u on r.user_id = u.id
+        where u.id = #{userId} and pri.perm is not null
+    </select>
+
+    <insert id="insertRelUserRole">
+        insert into sys_rel_user_role (id,user_id,role_id) values
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (null,#{userId},#{roleId})
+        </foreach>
+    </insert>
+
+    <!-- 根据用户删除关联关系-->
+    <delete id="deleteByUserId">
+        delete from sys_rel_user_role where user_id = #{userId}
+    </delete>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihrm.system.dao.PrivilegeDao">
+    <delete id="deleteByParentId">
+        delete from sys_privilege where parent_id = #{parentId}
+    </delete>
+
+    <select id="queryListParentId" resultType="com.ihrm.system.entity.Privilege">
+        select * from sys_privilege where parent_id = #{parentId} order by id asc
+    </select>
+
+    <select id="queryPage" resultType="com.ihrm.system.entity.Privilege" parameterType="int">
+        select * from sys_privilege where 1 =1
+        <if test="name != null and name != ''">
+            and name LIKE concat(concat('%',#{name}),'%')
+        </if>
+        order by id desc limit #{page},#{limit}
+    </select>
+
+    <!--根据用户id查询所有的权限集合-->
+    <select id="findAlPrivilegeByRoleIds" resultType="com.ihrm.system.entity.Privilege">
+        select DISTINCT p.*  from sys_privilege p
+        join sys_rel_role_pri rrp on rrp.pri_id = p.id
+        join sys_rel_user_role rur on rur.role_id = rrp.role_id
+        where rur.role_id in
+        <foreach collection="roleIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>
